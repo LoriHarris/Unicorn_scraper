@@ -15,22 +15,30 @@
     <p><a class="btn btn-primary btn-lg" href="/scrape" role="button">Get Mars Info</a></p>
     <div>
     </div>
+    
     <div>
-      <img src= "{{ img_dict.Featured_Image }}" alt="Featured Image">
-    </div>
-    <div>
-        {% for item in img_dict %}
+        
         <div class="col-lg-4">
           <div class="card" style="width: 20rem;">
               <div class="card-body">
-                <h4 class="card-title">{{ item.img_Title }}</h4>
-                <h6 class="card-subtitle mb-2 text-muted">URL: {{ item.img_url }}</h6>
+                <h4 class="card-title">{{ data.news_headline }}</h4>
+                <h6 class="card-subtitle mb-2 text-muted">URL: {{ data.news_link }}</h6>
+                <p>{{ data.news_text }}</p>
                 </div>
                 </div>
             </div>
         
-        {% endfor %}
       </div>
+      <div>
+      <img src= "{{ data.featured_img }}" alt="Featured Image">
+      <img src= "{{ data.mars_hemis[0][0] }}" alt = "Mars-Hemi">
+      <img src= "{{ data.mars_hemis[0][1] }}" alt = "Mars-Hemi">
+      <img src= "{{ data.mars_hemis[0][2] }}" alt = "Mars-Hemi">
+      <img src= "{{ data.mars_hemis[0][3] }}" alt = "Mars-Hemi">
+
+
+
+    </div>
   </div>
 </body>
 

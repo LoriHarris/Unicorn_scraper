@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[1]:
 
 
 from splinter import Browser
@@ -14,9 +18,7 @@ def init_browser():
         return Browser("chrome", **executable_path, headless=False)
 
 def data_scrape():
-        conn = "mongodb://localhost:27017"
-        client = pymongo.MongoClient(conn)
-        db = client.mars_app
+
         browser = init_browser()
         url = 'https://mars.nasa.gov/news/'
         browser.visit(url)
@@ -31,42 +33,50 @@ def data_scrape():
         
                 link = result.a['href']
                 paragraph=soup.find("div", class_="article_teaser_body").text
-                if (title and paragraph and link):
-                        db.img_dict.insert_many(
-                                [
-                                        {
-                                                "News_Title": title,
-                                                "News_Paragraph": paragraph,
-                                                "News_Link": link,
-                                        }
-                                ]
-                        )
-                
+        if (title and paragraph and link):
+                print('------------')
+                print("News Title = ", title, "\n")
+                print("News Summary", paragraph, "\n")
+                print(link, "\n")
 
 
 
-        # #I used Splinter as the assignment dictated in the boxes below
-        # # however I was was able to pull the link for the featured image with BS from home page
-        # # so I included that too, here:
-        # url_pic = "https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars"
-        # browser.visit(url_pic)
-        # html_pic = browser.html
-        # soup_pic = BeautifulSoup(html_pic, 'html.parser')
-        # results1 = soup_pic.find('a', class_="button fancybox")['data-fancybox-href']
-        # featured_image_url=("https://www.jpl.nasa.gov"+results1)
-        # print(featured_image_url)
-
-
-        # #Now to get splinter results which were the same end result
+        #I used Splinter as the assignment dictated in the boxes below
+        # however I was was able to pull the link for the featured image with BS from home page
+        # so I included that too, in this box
         url_pic = "https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars"
         browser.visit(url_pic)
-        browser.click_link_by_partial_text('FULL')
-        html_f_pic = browser.html
-        soup_f_pic= BeautifulSoup(html_f_pic, 'html.parser')
-        results1 = soup_f_pic.find('a', class_="button fancybox")['data-fancybox-href']
-        # featured_image_url=("https://www.jpl.nasa.gov"+results1)
+        html_pic = browser.html
+        soup_pic = BeautifulSoup(html_pic, 'html.parser')
 
 
+        # In[6]:
+
+
+        results1 = soup_pic.find('a', class_="button fancybox")['data-fancybox-href']
+        featured_image_url=("https://www.jpl.nasa.gov"+results1)
+        print(featured_image_url)
+
+
+        # In[7]:
+
+
+        #Now to get splinter results which were the same end result
+        # browser.click_link_by_partial_text('FULL')
+
+        # html_f_pic = browser.html
+        # soup_f_pic= BeautifulSoup(html_f_pic, 'html.parser')
+
+
+        # # In[8]:
+
+
+        # results2 = soup_f_pic.find('img src', class_="fancybox-image")
+        # featured_image_url1=("https://www.jpl.nasa.gov"+results2)
+        # print(featured_image_url1)
+
+
+        
 
 
         browser.visit("https://twitter.com/marswxreport?lang=en")
@@ -75,24 +85,25 @@ def data_scrape():
         mars_weather = soup_tweets.find('p', class_='TweetTextSize').text
         print(mars_weather)
 
+
+
         pandas_url = ("http://space-facts.com/Mars/")
         tables = pd.read_html(pandas_url)
         tables
 
+
+
         df = tables[0]
+        df
+
+
+
+
         html_table = df.to_html()
         html_table.replace('\n', '')
-        df_html = df.to_html('table.html')
+        table = df.to_html('table.html')
 
-        db.img_dict.insert_many(
-                                        [
-                                                {
-                                                        "Featured_Image": results1,
-                                                        "Mars_Weather": mars_weather,
-                                                        "Mars_Table": df_html,
-                                                }
-                                        ]
-                                )
+
         
         browser.visit("https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars")
         browser.click_link_by_partial_text('Cerberus')
@@ -125,31 +136,22 @@ def data_scrape():
         soup_mars_img3 = BeautifulSoup(html_mars_img3, 'html.parser')
         valles_img = soup_mars_img3.find('a', target='_blank')['href']
         valles_title= soup_mars_img3.find('h2', class_='title').text
-       
+        mars_hemi = {"img_url": (cerberus_img, schia_img, syrtis_img, valles_img),
+        "img_title":(cerberus_title, schia_title, syrtis_title, valles_title)}
         
-        
-        db.img_dict.insert_many(
-                [
-                {
-                        "img_url": cerberus_img,
-                        "img_Title": cerberus_title,
-                
-                },
-                {
-                        "img_url": schia_img,
-                        "img_Title": schia_title,
-                },
-                {
-                        "img_url": syrtis_img,
-                        "img_Title": syrtis_title,
-                },
-                {
-                        "img_url": valles_img,
-                        "img_Title": valles_title,
-                }
-                ]
-        )
-        
+        links_to_use= []
+        for key, val in mars_hemi.items():
+                links_to_use.append(val)
+        mars_data = {
+        "news_headline": title,
+        "news_text": paragraph,
+        "news_link": link,
+        "featured_img": featured_image_url,
+        "weather" : mars_weather,
+        "fact_table":  table,
+        "mars_hemis": links_to_use
+         }
+        return mars_data
 
 
 
