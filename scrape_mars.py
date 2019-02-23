@@ -101,7 +101,7 @@ def data_scrape():
 
         html_table = df.to_html()
         html_table.replace('\n', '')
-        table = df.to_html('table.html')
+        df.to_html('table.html')
 
 
         
@@ -148,7 +148,7 @@ def data_scrape():
         "news_link": link,
         "featured_img": featured_image_url,
         "weather" : mars_weather,
-        "fact_table":  table,
+        "fact_table":  html_table,
         "mars_hemis": links_to_use
          }
         return mars_data
