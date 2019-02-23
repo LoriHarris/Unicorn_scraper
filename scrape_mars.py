@@ -44,36 +44,37 @@ def data_scrape():
         #I used Splinter as the assignment dictated in the boxes below
         # however I was was able to pull the link for the featured image with BS from home page
         # so I included that too, in this box
-        url_pic = "https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars"
-        browser.visit(url_pic)
-        html_pic = browser.html
-        soup_pic = BeautifulSoup(html_pic, 'html.parser')
+        # url_pic = "https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars"
+        # browser.visit(url_pic)
+        # html_pic = browser.html
+        # soup_pic = BeautifulSoup(html_pic, 'html.parser')
 
 
         # In[6]:
 
 
-        results1 = soup_pic.find('a', class_="button fancybox")['data-fancybox-href']
-        featured_image_url=("https://www.jpl.nasa.gov"+results1)
-        print(featured_image_url)
+        # results1 = soup_pic.find('a', class_="button fancybox")['data-fancybox-href']
+        # featured_image_url=("https://www.jpl.nasa.gov"+results1)
+        # print(featured_image_url)
 
 
         # In[7]:
 
 
         #Now to get splinter results which were the same end result
-        # browser.click_link_by_partial_text('FULL')
+        url_pic = "https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars"
+        html_pic = browser.html
+        soup_pic = BeautifulSoup(html_pic, 'html.parser')
+        browser.visit(url_pic)
+        browser.click_link_by_partial_text('FULL')
+        time.sleep(5)
 
-        # html_f_pic = browser.html
-        # soup_f_pic= BeautifulSoup(html_f_pic, 'html.parser')
-
-
-        # # In[8]:
-
-
-        # results2 = soup_f_pic.find('img src', class_="fancybox-image")
-        # featured_image_url1=("https://www.jpl.nasa.gov"+results2)
-        # print(featured_image_url1)
+        browser.click_link_by_partial_text('more info')
+        html_f_pic1 = browser.html
+        soup_f_pic1= BeautifulSoup(html_f_pic1, 'html.parser')
+        results2 = soup_f_pic1.find('img', class_="main_image")['src']
+        results2
+        featured_image_url=("https://www.jpl.nasa.gov"+results2)
 
 
         
